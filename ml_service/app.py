@@ -72,6 +72,10 @@ def get_top_keywords(text: str, top_n: int = 10):
 class NewsInput(BaseModel):
     text: str
 
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "FakeGuard ML"}
+
 @app.post("/predict")
 def predict(news: NewsInput):
     cleaned  = clean_text(news.text)
