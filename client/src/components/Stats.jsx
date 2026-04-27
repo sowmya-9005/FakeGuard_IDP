@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -16,8 +16,8 @@ export default function Stats() {
   const [recent, setRecent]     = useState([]);
 
   useEffect(() => {
-    axios.get("/api/stats").then(r => setStats(r.data)).catch(() => {});
-    axios.get("/api/history?limit=6").then(r => setRecent(r.data.slice(0, 6))).catch(() => {});
+    api.get("/api/stats").then(r => setStats(r.data)).catch(() => {});
+    api.get("/api/history?limit=6").then(r => setRecent(r.data.slice(0, 6))).catch(() => {});
   }, []);
 
   if (!stats) return (

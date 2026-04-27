@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import api from "../api";
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -23,7 +23,7 @@ export default function History() {
     const params = {};
     if (filter !== "All") params.filter = filter;
     if (search.trim()) params.search = search.trim();
-    axios.get("/api/history", { params })
+    api.get("/api/history", { params })
       .then(r => setHistory(r.data))
       .catch(() => {})
       .finally(() => setLoading(false));

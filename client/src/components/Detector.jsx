@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { exportPDF } from "../utils/exportPDF";
 
 const MAX_CHARS = 5000;
@@ -33,7 +33,7 @@ export default function Detector() {
     setError("");
     setResult(null);
     try {
-      const res = await axios.post("/api/predict", { text });
+      const res = await api.post("/api/predict", { text });
       setResult(res.data);
     } catch {
       setError("Something went wrong. Make sure all services are running.");
