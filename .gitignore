@@ -1,0 +1,8 @@
+node_modules/
+.env
+ml_service/model/
+ml_service/__pycache__/
+*.pkl
+*.pyc
+dist/
+.DS_Store

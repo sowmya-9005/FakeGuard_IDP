@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FakeGuard Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .diagram {
+    width: 860px;
+    background: #0f172a;
+    padding: 2rem;
+    border-radius: 16px;
+  }
+  .title {
+    text-align: center;
+    color: #f1f5f9;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Tiers */
+  .tier {
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid;
+    position: relative;
+  }
+  .tier-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .tier-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  /* Presentation */
+  .tier-presentation {
+    background: rgba(99,102,241,0.07);
+    border-color: rgba(99,102,241,0.3);
+  }
+  .tier-presentation .tier-label { color: #818cf8; }
+
+  /* Application */
+  .tier-application {
+    background: rgba(139,92,246,0.07);
+    border-color: rgba(139,92,246,0.3);
+  }
+  .tier-application .tier-label { color: #a78bfa; }
+
+  /* ML */
+  .tier-ml {
+    background: rgba(236,72,153,0.07);
+    border-color: rgba(236,72,153,0.3);
+  }
+  .tier-ml .tier-label { color: #f472b6; }
+
+  /* Data */
+  .tier-data {
+    background: rgba(34,197,94,0.07);
+    border-color: rgba(34,197,94,0.3);
+  }
+  .tier-data .tier-label { color: #4ade80; }
+
+  /* Boxes */
+  .box {
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+  .box-sub {
+    font-size: 0.7rem;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  .box-react { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.4); color: #a5b4fc; }
+  .box-express { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); color: #c4b5fd; }
+  .box-fastapi { background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.4); color: #f9a8d4; }
+  .box-mongo { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #86efac; }
+  .box-pipeline { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); color: #fde68a; }
+  .box-neutral { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
+
+  /* Arrow */
+  .arrow-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0.1rem 0;
+  }
+  .arrow-line {
+    width: 2px;
+    height: 18px;
+    background: #334155;
+  }
+  .arrow-label {
+    font-size: 0.68rem;
+    color: #475569;
+    background: #0f172a;
+    padding: 0 0.4rem;
+    margin: -2px 0;
+    z-index: 1;
+    position: relative;
+  }
+  .arrow-head {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid #334155;
+  }
+
+  /* Bottom row (ML + Data side by side) */
+  .bottom-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .bottom-row .tier { flex: 1; margin-bottom: 0; }
+
+  /* Flow steps */
+  .flow {
+    margin-top: 1.75rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+  }
+  .flow-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+  }
+  .flow-steps {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .step {
+    background: rgba(99,102,241,0.1);
+    border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 6px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.73rem;
+    color: #a5b4fc;
+    font-weight: 500;
+  }
+  .step-arrow {
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="diagram">
+  <div class="title">🛡️ FakeGuard — System Architecture</div>
+  <div class="subtitle">Microservice-based Four-Tier Architecture</div>
+
+  <!-- Presentation Tier -->
+  <div class="tier tier-presentation">
+    <div class="tier-label">🖥️ Presentation Tier</div>
+    <div class="tier-row">
+      <div class="box box-react">
+        🔍 Detector
+        <span class="box-sub">Article Input + Result</span>
+      </div>
+      <div class="box box-react">
+        📊 Stats Dashboard
+        <span class="box-sub">Charts + Activity Feed</span>
+      </div>
+      <div class="box box-react">
+        🕒 History
+        <span class="box-sub">Search + Filter</span>
+      </div>
+      <div class="box box-neutral">
+        📄 PDF Export
+        <span class="box-sub">jsPDF Report</span>
+      </div>
+    </div>
+    <div style="text-align:right; font-size:0.7rem; color:#4f46e5; margin-top:0.5rem;">React 18 + Vite · Port 5173</div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-wrap">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">HTTP · Axios · Vite Proxy</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-head"></div>
+  </div>
+
+  <!-- Application Tier -->
+  <div class="tier tier-application">
+    <div class="tier-label">⚙️ Application Tier</div>
+    <div class="tier-row">
+      <div class="box box-express">
+        POST /api/predict
+        <span class="box-sub">Proxy to ML Service</span>
+      </div>
+      <div class="box box-express">
+        GET /api/history
+        <span class="box-sub">Search + Filter</span>
+      </div>
+      <div class="box box-express">
+        GET /api/stats
+        <span class="box-sub">Aggregated Counts</span>
+      </div>
+    </div>
+    <div style="text-align:right; font-size:0.7rem; color:#7c3aed; margin-top:0.5rem;">Express.js + Node.js · Port 5000</div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-wrap">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">HTTP + Mongoose ODM</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-head"></div>
+  </div>
+
+  <!-- Bottom: ML + Data side by side -->
+  <div class="bottom-row">
+    <!-- ML Tier -->
+    <div class="tier tier-ml" style="flex:1.4">
+      <div class="tier-label">🤖 ML Tier</div>
+      <div class="tier-row" style="flex-wrap:wrap; gap:0.5rem;">
+        <div class="box box-pipeline" style="flex:none; width:calc(33% - 0.35rem)">
+          🧹 NLTK Clean
+          <span class="box-sub">Lemmatize + Stopwords</span>
+        </div>
+        <div class="box box-pipeline" style="flex:none; width:calc(33% - 0.35rem)">
+          📐 TF-IDF
+          <span class="box-sub">100K Features</span>
+        </div>
+        <div class="box box-pipeline" style="flex:none; width:calc(33% - 0.35rem)">
+          ✂️ Chi-Square
+          <span class="box-sub">Top 50K Features</span>
+        </div>
+        <div class="box box-pipeline" style="flex:none; width:calc(33% - 0.35rem)">
+          📉 SVD
+          <span class="box-sub">300 Components</span>
+        </div>
+        <div class="box box-pipeline" style="flex:none; width:calc(33% - 0.35rem)">
+          ⚖️ Scaler
+          <span class="box-sub">StandardScaler</span>
+        </div>
+        <div class="box box-fastapi" style="flex:none; width:calc(33% - 0.35rem)">
+          🏆 Stacking
+          <span class="box-sub">LR+SVM+RF+XGB</span>
+        </div>
+      </div>
+      <div style="text-align:right; font-size:0.7rem; color:#db2777; margin-top:0.5rem;">FastAPI + Python 3.13 · Port 8000</div>
+    </div>
+
+    <!-- Data Tier -->
+    <div class="tier tier-data" style="flex:1">
+      <div class="tier-label">🗄️ Data Tier</div>
+      <div class="tier-row" style="flex-direction:column; gap:0.5rem;">
+        <div class="box box-mongo">
+          predictions
+          <span class="box-sub">text, prediction, confidence</span>
+        </div>
+        <div class="box box-mongo">
+          keywords [ ]
+          <span class="box-sub">word, score</span>
+        </div>
+        <div class="box box-mongo">
+          createdAt
+          <span class="box-sub">Timestamp Index</span>
+        </div>
+      </div>
+      <div style="text-align:right; font-size:0.7rem; color:#16a34a; margin-top:0.5rem;">MongoDB · Mongoose · Port 27017</div>
+    </div>
+  </div>
+
+  <!-- Request Flow -->
+  <div class="flow">
+    <div class="flow-title">📡 Request Flow</div>
+    <div class="flow-steps">
+      <div class="step">1. User pastes article</div>
+      <div class="step-arrow">→</div>
+      <div class="step">2. React POST /api/predict</div>
+      <div class="step-arrow">→</div>
+      <div class="step">3. Express → FastAPI</div>
+      <div class="step-arrow">→</div>
+      <div class="step">4. ML Pipeline runs</div>
+      <div class="step-arrow">→</div>
+      <div class="step">5. Result saved to MongoDB</div>
+      <div class="step-arrow">→</div>
+      <div class="step">6. Response → React UI</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
