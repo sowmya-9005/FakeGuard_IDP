@@ -12,13 +12,14 @@ router.post("/predict", async (req, res) => {
     return res.status(400).json({ error: "Text is required" });
 
   try {
-    const mlRes = await axios.post(`${ML_SERVICE}/predict`, { text });
+    const mlRes = await axios.post(`${ML_SERVICE}/predict`, { text }, { timeout: 60000 });
     const { prediction, confidence, keywords } = mlRes.data;
     const saved = await Prediction.create({ text, prediction, confidence, keywords });
     res.json({ prediction, confidence, keywords, id: saved._id });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Prediction failed" });
+    console.error("Prediction error:", err.message);
+    console.error("ML_SERVICE URL:", ML_SERVICE);
+    res.status(500).json({ error: "Prediction failed", detail: err.message });
   }
 });
 
